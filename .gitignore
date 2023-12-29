@@ -5,6 +5,6 @@ src/__pycache__/functions.cpython-311.pyc
 src/__pycache__/constants.cpython-311.pyc
 comparisons/devtrans.py
 comparisons/typegreek.js
-comparisons
+/comparisons
 .gitignore
 mock.py
