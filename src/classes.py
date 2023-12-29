@@ -2,11 +2,6 @@
 
 from typing import Callable
 
-<<<<<<< HEAD
-=======
-from loguru import logger
-
->>>>>>> 4e1b96417d73082237fa53a65278fdbd7271f988
 from .constants import (ACCENTS,
                         ACUTE_SYMBOL,
                         ALPHA, ALPHA_DIACRITICS,
@@ -30,10 +25,6 @@ from .constants import (ACCENTS,
                         OMEGA, OMEGA_DIACRITICS,
                         OMEGA_SPECIAL, OMEGA_SUBSCRIPT_DIACRITICS,
                         OMICRON,
-<<<<<<< HEAD
-=======
-                        PUNCTUATION,
->>>>>>> 4e1b96417d73082237fa53a65278fdbd7271f988
                         ROUGH_SYMBOL,
                         SHORT_VOWELS,
                         SIMPLE_ACCENTS,
@@ -227,12 +218,9 @@ class BetacodeComplexVowelToken(BetacodeToken):
 
     def __repr__(self) -> str:
 
-<<<<<<< HEAD
         # NOTE: Possible conflicts not covered by the conditions
         # below have already been resolved by ``fix_character_conflicts``
 
-=======
->>>>>>> 4e1b96417d73082237fa53a65278fdbd7271f988
         coefficients: str = "".join(filter(self.__is_renderable,
                                            self.coefficients))
         for coefficient in coefficients:
@@ -240,12 +228,6 @@ class BetacodeComplexVowelToken(BetacodeToken):
                 coefficients.replace(coefficient,
                                      self.redefined_chars[coefficient])
 
-<<<<<<< HEAD
-=======
-        if len(coefficients) == 0:
-            return super().__repr__()
-
->>>>>>> 4e1b96417d73082237fa53a65278fdbd7271f988
         row: int = 0
         col: int = 0
         rad: str = self.radical
@@ -433,13 +415,8 @@ class BetacodeTokenizer:
 
             # A vowel + diacritical -> complex token, unordered sequence
             if is_vowel(self.curr_char):
-<<<<<<< HEAD
                 if is_diacritical(self.next_char):
                     token = self.new_token(BetacodeComplexVowelToken)
-=======
-                token = self.new_token(BetacodeComplexVowelToken)
-                if is_diacritical(self.next_char):
->>>>>>> 4e1b96417d73082237fa53a65278fdbd7271f988
                     self.index += 1
                     self.unordered_sequence(
                         token, DIACRITICAL_CATEGORIES, is_diacritical)
