@@ -1,3 +1,9 @@
+/**
+ * Originally from https://typegreek.com. Used here for educational purposes. 
+ */
+
+
+
 /* =============================================================
 
    ============================================================= */
@@ -729,7 +735,8 @@ function combineGreekCharacters(control) {
 	                // this character is lowercase sigma and the next character 
 	                	                workingString = 'ς'; 
 	                }
-				}
+				}
+
             }
         } // don't do anything if this character was the end of the string
             

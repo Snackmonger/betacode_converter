@@ -11,6 +11,7 @@ ETA: str = "h"
 OMEGA: str = "w"
 IOTA: str = "i"
 UPSILON: str = "u"
+RHO: str = "r"
 SHORT_VOWELS: str = EPSILON + OMICRON
 LONG_VOWELS: str = ETA + OMEGA
 AMBIGUOUS_VOWELS: str = ALPHA + IOTA + UPSILON
@@ -25,37 +26,43 @@ DIAERESIS_SYMBOL: str = "+"
 MACRON_SYMBOL: str = "_"
 BREVE_SYMBOL: str = "-"
 
-PUNCTUATION: str = ".,;:?'\"’"
+LATIN_PUNCTUATION: str = ".,;:?'\"'’"
+GREEK_PUNCTUATION: str = ".,·:;'\"'’"
 SPACES: str = " "
 
 HIGH_VOWELS: str = IOTA + UPSILON
-LENGTHS: str = MACRON_SYMBOL + BREVE_SYMBOL
+LENGTH_MARKS: str = MACRON_SYMBOL + BREVE_SYMBOL
 VOWELS: str = SHORT_VOWELS + LONG_VOWELS + AMBIGUOUS_VOWELS
-BREATHINGS: str = SMOOTH_SYMBOL + ROUGH_SYMBOL
-ACCENTS: str = ACUTE_SYMBOL + GRAVE_SYMBOL + CIRCUMFLEX_SYMBOL
-ALL_DIACRITICS: str = BREATHINGS + ACCENTS + SUBSCRIPT_SYMBOL + DIAERESIS_SYMBOL
-DIACRITICAL_CATEGORIES: list[str] = [BREATHINGS, ACCENTS, SUBSCRIPT_SYMBOL, DIAERESIS_SYMBOL]
-GREEK_CONSONANT_CLUSTERS: dict[str, str] = {"ps": "y",
-                                            "ks": "c", 
-                                            "sd": "z", 
-                                            "ds": "z"}
+BREATHING_MARKS: str = SMOOTH_SYMBOL + ROUGH_SYMBOL
+ACCENT_MARKS: str = ACUTE_SYMBOL + GRAVE_SYMBOL + CIRCUMFLEX_SYMBOL
 
+ALL_DIACRITICALS: str = BREATHING_MARKS + ACCENT_MARKS + \
+    SUBSCRIPT_SYMBOL + DIAERESIS_SYMBOL
+
+DIACRITICAL_CATEGORIES: list[str] = [BREATHING_MARKS,
+                                     ACCENT_MARKS,
+                                     SUBSCRIPT_SYMBOL,
+                                     DIAERESIS_SYMBOL]
+
+VALID_BETACODE_CHARACTERS: str = LATIN_CHARSET + LATIN_CHARSET.upper() + \
+    LATIN_PUNCTUATION + ALL_DIACRITICALS + SPACES
+
+GREEK_CONSONANT_CLUSTERS: dict[str, str] = {"ps": "y", "ks": "c"}
 
 # Unicode character block: rows
 
 # This section mostly conforms to the unicode columns, below.
 # See /docs/unicode.rst for details.
-ALPHA_DIACRITICS: int = 0x1F00
-EPSILON_DIACRITICS: int = 0x1F10
-ETA_DIACRITICS: int = 0x1F20
-IOTA_DIACRITICS: int = 0x1F30
-OMICRON_DIACRITICS: int = 0x1F40
-UPSILON_DIACRITICS: int = 0x1F50
-OMEGA_DIACRITICS: int = 0x1F60
-ALPHA_SUBSCRIPT_DIACRITICS: int = 0x1F80
-ETA_SUBSCRIPT_DIACRITICS: int = 0x1F90
-OMEGA_SUBSCRIPT_DIACRITICS: int = 0x1FA0
-
+ALPHA_DIACRITICALS: int = 0x1F00
+EPSILON_DIACRITICALS: int = 0x1F10
+ETA_DIACRITICALS: int = 0x1F20
+IOTA_DIACRITICALS: int = 0x1F30
+OMICRON_DIACRITICALS: int = 0x1F40
+UPSILON_DIACRITICALS: int = 0x1F50
+OMEGA_DIACRITICALS: int = 0x1F60
+ALPHA_SUBSCRIPT_DIACRITICALS: int = 0x1F80
+ETA_SUBSCRIPT_DIACRITICALS: int = 0x1F90
+OMEGA_SUBSCRIPT_DIACRITICALS: int = 0x1FA0
 
 # This section needs to be treated specially.
 SIMPLE_ACCENTS: int = 0x1F70
@@ -68,8 +75,7 @@ IOTA_SPECIAL: int = 0x1FD0
 UPSILON_SPECIAL: int = 0x1FE0
 OMEGA_SPECIAL: int = 0x1FF0
 
-
-# Unicode character block: columns 
+# Unicode character block: columns
 
 # For rows 1F0x through 1FAx, except 1F7x
 LOWER_WITH_SMOOTH: int = 0x0

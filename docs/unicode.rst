@@ -21,26 +21,18 @@ U+1FEx 	ῠ 	ῡ 	ῢ 	ΰ 	ῤ 	ῥ 	ῦ 	ῧ 	Ῠ 	Ῡ 	Ὺ 	Ύ 	Ῥ 	῭ 	�
 U+1FFx 			ῲ 	ῳ 	ῴ 		ῶ 	ῷ 	Ὸ 	Ό 	Ὼ 	Ώ 	ῼ 	´ 	῾ 	
 
 
-Rules for creating vowel + diacritic tokens
--------------------------------------------
+A few characters from the Coptic block supply a few missing forms:
+(N.B. decomposition of a symbol with a vowel and only an acute will recompose
+into a character from the Coptic block)
 
-A combination is triggered when the parser reaches a symbol that might be combined with the following symbol(s). For Greek, this 
-really just affects vowels (but just to make things a bit more challenging, I wanted to allow this for a few consonant combinations too.)
+U+03AA Ϊ
+U+03AB Ϋ
+U+03CA ϊ
+U+03CB ϋ
 
-In these tokens, the trigger symbol is considered the "radical" element, and the 
-
-1. A diacritic must come AFTER the vowel it modifies.
-    Exception: if the strict betacode formatting is followed, the diacritic comes after the capitalization sign instead of the vowel.
-2. A diacritic may be combined with another diacritic, provided they are of different classes.
-3. The order of diacritics is irrelevant (for us, but in strict betacode it is fixed)
-4. A diacritic that cannot be combined with the preceding characters will be interpreted as a separate token in which the diacritic itself is the radical.
-5. A diacritic that can theoretically be combined with the preceding characters, but can't actually be displayed, 
-will be ignored in the rendering but will not be interpreted as a separate character.
-    Explanation: We have 4 classes of diacritic: breathing, accent, diaeresis, and subscript. Each category can have one and only one mark. 
-    But some combinations can only allow for 2 or 3 categories. The extra categories are ignored, but don't cause an error. As far as the 
-    tokenizer is concerned, it's a valid combination; it's up to the rendering strategy to decide how to reconcile the conflict.
-
-
+Note: We can have capital upsilon with no markings, or with rough breathings etc., but not with smooth breathings etc.
+We have no characters to represent contradictory or self-evident things: neither circumflex nor macron can exist on short 
+vowels, nor brevia on long vowels, nor diaereses on non-high vowels, nor subscripts on high vowels
 
 
 Notes:

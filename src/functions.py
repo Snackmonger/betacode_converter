@@ -1,8 +1,9 @@
 
-from .constants import (ALL_DIACRITICS, LATIN_CHARSET, SHORT_VOWELS, LONG_VOWELS, AMBIGUOUS_VOWELS, VOWELS, SPACES, PUNCTUATION)
+from .constants import (ALL_DIACRITICALS, LATIN_CHARSET, SHORT_VOWELS, LONG_VOWELS, AMBIGUOUS_VOWELS, VOWELS, SPACES, LATIN_PUNCTUATION)
 
 
 __all__ = ["lower_and_upper",
+           "is_capital",
            "is_diacritical",
            "is_letter",
            "is_short_vowel",
@@ -22,7 +23,7 @@ def is_capital(char: str) -> bool:
     return char in LATIN_CHARSET.upper()
 
 def is_diacritical(char: str) -> bool:
-    return char in ALL_DIACRITICS
+    return char in ALL_DIACRITICALS
 
 def is_letter(char: str) -> bool:
     return char in lower_and_upper(LATIN_CHARSET)
@@ -43,7 +44,7 @@ def is_space(char: str) -> bool:
     return char in SPACES
 
 def is_punctuation(char: str) -> bool:
-    return char in PUNCTUATION
+    return char in LATIN_PUNCTUATION
 
 def is_endpoint(char: str) -> bool:
     return is_punctuation(char) or is_space(char)

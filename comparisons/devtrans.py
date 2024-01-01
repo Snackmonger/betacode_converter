@@ -1,4 +1,4 @@
-Originally from: https://pypi.org/project/devtrans
+# Originally from: https://pypi.org/project/devtrans. Used here for educational purposes.
 
 supported_decoders = ['dev', 'hk', 'iast', 'itrans', 'slp', 'vel', 'wx']
 supported_encoders = supported_decoders + ['tex']
