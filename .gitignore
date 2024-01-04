@@ -6,3 +6,6 @@ src/__pycache__/keywords.cpython-311.pyc
 src/__pycache__/rendering.cpython-311.pyc
 src/__pycache__/token.cpython-311.pyc
 src/__pycache__/tokenizer.cpython-311.pyc
+src/__pycache__/betacode.cpython-311.pyc
+src/__pycache__/gui.cpython-311.pyc
+docs/notes.rst

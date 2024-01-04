@@ -1,7 +1,8 @@
 import re
-from .token import BetacodeComplexConsonantToken, SymbolGroup, BetacodeComplexVowelToken, BetacodeToken
-from .functions import *
-from .constants import BREATHING_MARKS, DIACRITICAL_CATEGORIES, GREEK_CONSONANT_CLUSTERS, RHO
+from typing import Optional
+
+from .token import SymbolGroup
+from .functions import is_endpoint, is_space
 
 
 class TextCrawlProxy:
@@ -127,72 +128,22 @@ class TokenizingStrategy:
         return self.proxy.index - 1
 
 
-class BetacodeComplexVowelTokenizingStrategy(TokenizingStrategy):
-    """Wrapper for Betacode vowel parsing function and parsing trigger."""
-    def __init__(self, textblock: str):
-        super().__init__(textblock, BetacodeComplexVowelToken)
-
-    def trigger_condition(self, index: int) -> bool:
-        """Return true if the char at the current index can begin a complex
-        token."""
-        self.proxy.index = index
-        if is_vowel(self.proxy.curr_char) and is_diacritical(self.proxy.next_char):
-            return True
-        return False
-
-    def create_sequence(self, token: SymbolGroup) -> int:
-        """Create a sequence of diacritical marks following a vowel."""
-        return self.create_unordered_sequence(token, DIACRITICAL_CATEGORIES)
-    
-
-class BetacodeComplexConsonantTokenizingStrategy(TokenizingStrategy):
-    def __init__(self, textblock: str):
-        super().__init__(textblock, BetacodeComplexConsonantToken)
 
 
-    def trigger_condition(self, index: int) -> bool:
-        """Return true if the char at the current index can begin a complex
-        token."""
-        self.proxy.index = index
-        combination: str = self.proxy.curr_char + self.proxy.next_char
-        if combination.lower() in GREEK_CONSONANT_CLUSTERS:
-            return True
-        if self.proxy.curr_char in lower_and_upper(RHO) and self.proxy.next_char in BREATHING_MARKS:
-            return True
-        return False
+class Tokenizer:
+    """
+    Generic tokenizer for parsing characters and character groups into tokens.
+    """
+    END = chr(0x2403)
 
-
-    def create_sequence(self, token: SymbolGroup) -> int:
-        # NOTE: pick up here: debug this function, which seems to become trapped
-        # in an inescapable loop.
-
-
-        """Create a complex consonant consisting either of a consonant + a 
-        diacritical mark or a consonant + a consonant."""
-        combinations: list[str] = [x for x in GREEK_CONSONANT_CLUSTERS]
-        for x in combinations:
-            for char in x:
-                combinations.append(x.replace(char, char.upper()))
-        if token.radical in lower_and_upper(RHO):
-            return self.create_unordered_sequence(token, [BREATHING_MARKS])
-        return self.create_ordered_sequence(token, combinations)
-
-
-
-
-
-class BetacodeTokenizer:
-
-    def __init__(self, textblock: str):
-        self.textblock: str = textblock
+    def __init__(self, textblock: str) -> None:
+        self.textblock: str = textblock + self.END
         self.index: int = 0
-        self.strategies: list[TokenizingStrategy] = [
-            BetacodeComplexVowelTokenizingStrategy(textblock),
-            BetacodeComplexConsonantTokenizingStrategy(textblock)
-            ]
         self.tokens: list[SymbolGroup] = []
-        self.tokenize()
+        self.strategies: list[TokenizingStrategy] = []
+        self.default_token: type[SymbolGroup] = SymbolGroup
 
+    
     def __repr__(self):
         return "".join(str(token) for token in self.tokens)
 
@@ -218,14 +169,18 @@ class BetacodeTokenizer:
 
 
     def new_token(self,
-                  token_type: type[SymbolGroup] = BetacodeToken
+                  token_type: Optional[type[SymbolGroup]] = None
                   ) -> SymbolGroup:
+        
+        if token_type is None:
+            token_type = self.default_token
+
         token: SymbolGroup = token_type(self.curr_char)
-        self.__add_position_to_token(token)
+        self.add_position_to_token(token)
         return token
     
 
-    def __add_position_to_token(self, token: SymbolGroup) -> None:
+    def add_position_to_token(self, token: SymbolGroup) -> None:
         if not self.has_next:
             token.is_final = True
             return
@@ -247,23 +202,28 @@ class BetacodeTokenizer:
 
 
     def tokenize(self) -> None:
+        """Parse the class' textblock for tokens as defined by the class' 
+        strategies."""
         self.index = 0
         while self.has_next:
             token = self.new_token()
 
+            # Strategies for complex tokens
             for strategy in self.strategies:
                 if strategy.trigger_condition(self.index):
                     token = self.new_token(strategy.token_type)
                     self.index = strategy.create_sequence(token)
                     break
 
-            # Any token that has not already been appended + continue
-            # must be a simple token that takes no coefficients.
+            # Default simple token
             self.tokens.append(token)
             if self.has_next:
                 self.index += 1
-
-        # Catch the last index (which, by definition, cannot begin any
-        # sequence).
+    
+        # END token is to be discarded (but if we somehow got here
+        # with a valid token, then keep it).
+        if self.textblock[self.index] == self.END:
+            return
         token = self.new_token()
         self.tokens.append(token)
+            
