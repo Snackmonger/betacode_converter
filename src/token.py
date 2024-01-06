@@ -19,6 +19,7 @@ class SymbolGroup:
     """
     valid_radicals: str
     valid_coefficients: str
+
     def __init__(self, radical: str):
         if not self.is_valid_radical(radical):
             raise ValueError(f"Unrecognized radical: {radical}\n\
@@ -35,24 +36,25 @@ class SymbolGroup:
 
     @property
     def symbol(self) -> str:
-        return self.radical+self.coefficients
+        """The complete chain of characters in the symbol."""
+        return self.radical + self.coefficients
     
     @property
     def is_monograph(self) -> bool:
+        """True, if the symbol consists only of a radical."""
         return len(self.symbol) == 1
 
     def add_coefficient(self, coefficient: str) -> None:
+        """Add a given coefficient to the symbol."""
         if self.is_valid_coefficient(coefficient) and not coefficient in self.coefficients:
             self.coefficients += coefficient
 
-    def remove_coefficient(self, coefficient: str) -> None:
-        if coefficient in self.coefficients:
-            self.coefficients.replace(coefficient, "")
-
     def is_valid_radical(self, radical: str) -> bool:
+        """True, if the radical is recognized."""
         return len(radical) == 1 and radical in self.valid_radicals
     
     def is_valid_coefficient(self, coefficient: str) -> bool:
+        """True, if the coefficient is recognized."""
         return len(coefficient) == 1 and coefficient in self.valid_coefficients
     
     def suppress_char(self, char: str) -> None:

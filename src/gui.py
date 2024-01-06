@@ -1,47 +1,55 @@
 # type: ignore
-from tkinter import Event
+from tkinter import ttk
 from customtkinter import (CTk,
                            CTkTextbox,
-                           CTkFrame,
                            CTkOptionMenu)
+from typing import TYPE_CHECKING
 
-from .betacode import BetacodeTokenizer
-from .tokenizer import Tokenizer
+from .greek.betacode import BetacodeTokenizer
+
+if TYPE_CHECKING:
+    from .tokenizer import Tokenizer
 
 options = ["GREEK", "LATIN"]
 
 
 class App(CTk):
+    """Basic GUI for text entry and conversion."""
 
     def __init__(self):
         super().__init__()
         self.tokenizers: dict[str, type[Tokenizer]] = {"GREEK": BetacodeTokenizer}
-        self.current_state: str = list(self.tokenizers)[0]
+        self.selected_tokenizer: str = list(self.tokenizers)[0]
 
+        # Dropdown menu (left)
         self.option_menu: CTkOptionMenu = CTkOptionMenu(self,
                                                         values=list(self.tokenizers),
                                                         command=self.change_state)
     
-        self.option_menu.grid(column=0, row=0)
+        self.option_menu.grid(column=0, row=0, rowspan=3, sticky='N')
 
-        self.top_block: CTkFrame = CTkFrame(self, width=300)
-        self.input: CTkTextbox = CTkTextbox(self.top_block, width=300)
+        # Top box (right)
+        self.input: CTkTextbox = CTkTextbox(self, width=600)
         self.input.bind("<KeyRelease>", self.update_text)
-        self.input.grid()
-        self.top_block.grid(column=1, row=0)
+        self.input.configure(font=("times new roman", 26))
+        self.input.grid(column=1, row=0)
 
-        self.bottom_block: CTkFrame = CTkFrame(self, width=300)
-        self.output: CTkTextbox = CTkTextbox(self.bottom_block, wrap="word", width=300)
-        self.output.grid()
-        self.bottom_block.grid(column=1, row=1)
-        
+        # Line
+        self.sep: ttk.Separator = ttk.Separator(self)
+        self.sep.grid(column=1, row=1, sticky="NSEW")
 
-    def change_state(self, state_name: str) -> None:
-        self.current_state = state_name
-    
+        # Bottom box (right)
+        self.output: CTkTextbox = CTkTextbox(self, wrap="word", width=600)
+        self.output.configure(font=("times new roman", 26))
+        self.output.grid(column=1, row=2) 
 
-    def update_text(self, event: Event) -> None:
-        tokenizer: type[Tokenizer] = self.tokenizers[self.current_state]
+    def change_state(self, tokenizer_name: str) -> None:
+        """Change which tokenizer to use."""
+        self.selected_tokenizer = tokenizer_name
+
+    def update_text(self, *args) -> None:
+        """Replace the current text with a newly parsed conversion."""
+        tokenizer: type[Tokenizer] = self.tokenizers[self.selected_tokenizer]
         text: str = self.input.get("1.0", "end")
         conversion: str = str(tokenizer(text))
         self.output.delete("0.0", "end")

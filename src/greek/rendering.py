@@ -1,27 +1,27 @@
-from .constants import (ACUTE_SYMBOL, 
-                        ALPHA, 
+from .constants import (ACUTE_SYMBOL,
+                        ALPHA,
                         ALPHA_DIACRITICALS,
-                        ALPHA_SPECIAL, 
+                        ALPHA_SPECIAL,
                         ALPHA_SUBSCRIPT_DIACRITICALS,
                         BREVE_SYMBOL,
                         CIRCUMFLEX_SYMBOL,
                         DIAERESIS_SYMBOL,
-                        EPSILON, 
+                        EPSILON,
                         EPSILON_DIACRITICALS,
-                        ETA, 
+                        ETA,
                         ETA_DIACRITICALS,
-                        ETA_SPECIAL, 
+                        ETA_SPECIAL,
                         ETA_SUBSCRIPT_DIACRITICALS,
                         GRAVE_SYMBOL, GREEK_CHARSET, GREEK_PUNCTUATION,
-                        IOTA, 
+                        IOTA,
                         IOTA_DIACRITICALS,
                         IOTA_SPECIAL, LATIN_CHARSET,
                         MACRON_SYMBOL,
-                        OMEGA, 
+                        OMEGA,
                         OMEGA_DIACRITICALS,
-                        OMEGA_SPECIAL, 
+                        OMEGA_SPECIAL,
                         OMEGA_SUBSCRIPT_DIACRITICALS,
-                        OMICRON, LATIN_PUNCTUATION,
+                        OMICRON, LATIN_PUNCTUATION, OMICRON_DIACRITICALS,
                         ROUGH_SYMBOL,
                         SIMPLE_ACCENTS,
                         SMOOTH_SYMBOL,
@@ -29,7 +29,7 @@ from .constants import (ACUTE_SYMBOL,
                         UPSILON, UPSILON_DIACRITICALS,
                         UPSILON_SPECIAL)
 
-from .functions import lower_and_upper      
+from .functions import lower_and_upper
 
 def get_greek_vowel_special_row(vowel: str) -> int:
     rows: list[tuple[str, int]] = [
@@ -52,7 +52,7 @@ def get_greek_vowel_simple_accent_offset(radical: str) -> int:
         return 0
     else:
         return 2
-    
+
 
 def render_simple_betacode(symbol: str) -> str:
     for i, latchar in enumerate(lower_and_upper(LATIN_CHARSET)):
@@ -105,7 +105,7 @@ def render_betacode_vowel(radical: str, coefficients: str) -> str:
         col = 6
         row = get_greek_vowel_special_row(radical)
         return chr(row + col)
-    
+
     # Supplements borrowed from the coptic block
     if coefficients == DIAERESIS_SYMBOL:
         num: int
@@ -121,6 +121,7 @@ def render_betacode_vowel(radical: str, coefficients: str) -> str:
         row = get_greek_vowel_special_row(radical)
         col += 3
         return chr(row + col)
+
 
     # Symbols in the special ranges: diaeresis
     # N.B. diaeresis can only exist on lower case upsilon and iota.
@@ -180,7 +181,7 @@ def render_betacode_vowel(radical: str, coefficients: str) -> str:
     elif radical in lower_and_upper(IOTA):
         row = IOTA_DIACRITICALS
     elif radical in lower_and_upper(OMICRON):
-        row = OMEGA_DIACRITICALS
+        row = OMICRON_DIACRITICALS
     elif radical in lower_and_upper(UPSILON):
         row = UPSILON_DIACRITICALS
 

@@ -4,5 +4,3 @@ x = App()
 
 x.mainloop()
 
-
-# BUGFIX: Omicron is returning omega with breathing and accents

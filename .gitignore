@@ -9,3 +9,8 @@ src/__pycache__/tokenizer.cpython-311.pyc
 src/__pycache__/betacode.cpython-311.pyc
 src/__pycache__/gui.cpython-311.pyc
 docs/notes.rst
+src/greek/__pycache__/__init__.cpython-311.pyc
+src/greek/__pycache__/betacode.cpython-311.pyc
+src/greek/__pycache__/constants.cpython-311.pyc
+src/greek/__pycache__/functions.cpython-311.pyc
+src/greek/__pycache__/rendering.cpython-311.pyc

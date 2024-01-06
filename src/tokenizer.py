@@ -34,6 +34,12 @@ class TextCrawlProxy:
 
 
 class TokenizingStrategy:
+    """Generic class to represent the operation of a tokenizer.
+    
+    The tokenizer queries the trigger condition to see whether the
+    given radical is appropriate to begin a sequence, then"""
+
+
     def __init__(self, textblock: str, token_type: type[SymbolGroup]) -> None:
         self.proxy: TextCrawlProxy = TextCrawlProxy(textblock)
         self.token_type: type[SymbolGroup] = token_type
@@ -48,7 +54,9 @@ class TokenizingStrategy:
     def create_sequence(self, token: SymbolGroup) -> int:
         """Generate a sequence of coefficient characters to attatch to the 
         radical of given token. (Subclasses must provide their own 
-        implementation of this method)."""
+        implementation of this method. The class provides two generic
+        sequencing methods that can fulfill this role: 
+        ``create_ordered_sequence`` and ``create_unordered_sequence``)."""
         raise NotImplementedError
 
     def create_unordered_sequence(self,
@@ -77,19 +85,19 @@ class TokenizingStrategy:
         int             : Instruction to the tokenizer where to resume.
         """
         self.proxy.index += 1
-        switch: list[tuple[str, bool]] = [
-            (category, False) for category in categories]
+        switch: dict[str, bool] = {category: False for category in categories}
         while self.proxy.has_next:
             if not self.proxy.curr_char in "".join(categories):
                 return self.proxy.index -1
 
-            for category, already_used in switch:
+            for category, already_used in switch.items():
                 if self.proxy.curr_char in category:
                     if already_used:
                         return self.proxy.index -1
 
                     token.add_coefficient(self.proxy.curr_char)
-                    already_used = True
+                    switch[category] = True
+
 
             self.proxy.index += 1
 
@@ -109,25 +117,32 @@ class TokenizingStrategy:
         This entails that a group of symbols can make up a compound symbol in
         specific orders, and that each subsequent symbol narrows the number of
         remaining legal combinations.
+
+        Parameters
+        ----------
+        token               : An initialized token (modified in-place)
+        legal_combinations  : A list of valid character combinations.
+
+        Returns
+        -------
+        int             : Instruction to the tokenizer where to resume.
         """
         self.proxy.index += 1
         current_group: str = token.radical
         remaining_combinations: list[str] = legal_combinations
         while self.proxy.has_next:
-            continued_group: str = current_group + self.proxy.next_char
+            continued_group: str = current_group + self.proxy.curr_char
             partial_matches: list[str] = re.findall(
                 fr"({continued_group}[\w]*)", " ".join(remaining_combinations))
             if partial_matches:
                 remaining_combinations = partial_matches
-                token.add_coefficient(self.proxy.next_char)
+                current_group = continued_group
+                token.add_coefficient(self.proxy.curr_char)
                 self.proxy.index += 1
-
             else:
                 return self.proxy.index -1
-            
+
         return self.proxy.index - 1
-
-
 
 
 class Tokenizer:
@@ -221,7 +236,7 @@ class Tokenizer:
                 self.index += 1
     
         # END token is to be discarded (but if we somehow got here
-        # with a valid token, then keep it).
+        # with a valid token instead of END, then keep it).
         if self.textblock[self.index] == self.END:
             return
         token = self.new_token()
