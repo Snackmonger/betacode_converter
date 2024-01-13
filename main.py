@@ -1,11 +1,13 @@
-# from src.betacode import BetacodeTokenizer
-# x = r"""mh=nin a)/eide qea\ phlhi+a/dew A)xilh=os, ou)lome/nhn, h(\ muri/’ A)xaioi=s a)/lge’ e)/qhke zhno\s e)/oi ti/ ken a)/llo para\ spondh=|sin a)ei/dein lw/ion h)\ qeo\n au)to/n, a)ei\ me/gan, ai)e\n a)/nakta, phlago/nwn e)lath=ra, dikaspo/lon ou)rani/dh|si; pw=s kai/ min, diktai=on a)ei/somen h)e\ lukai=on; r(h=ma R(hma R)hma r)hma ksairw psallw pSallw"""
+from src.gui import App
+
+# TODO: A combination containing a diaeresis or subscript will ignore 
+# the symbol if another more highly-ranked symbol follows it. BUT, if we
+# attempt to add a diaeresis or subscript to an impossible vowel, it is
+# getting converted to a grave (it should simply be ignored in this case).
+# E.g. a+ returns a\ and i| returns i\
 
 
-# y = BetacodeTokenizer(x)
+if __name__ == "__main__":
+    x: App = App()
+    x.mainloop() #type:ignore
 
-# print(y)
-import re
-
-partial_matches: list[str] = re.findall(fr"(ks[\w]*)", " ".join(['ks', 'kS', 'Ks', 'KS', 'ps', 'Ps']))
-print(partial_matches)
