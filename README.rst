@@ -5,7 +5,7 @@ BETACODE CONVERTER
 Abstract
 --------
 
-The original function of the program is to convert Greek betacode in the Latin alphabet into polytonic Greek characters, with the dicritical symbols incorporated into their appropriate
+The original function of the program is to convert Greek betacode in the Latin alphabet into polytonic Greek characters, with the diacritical symbols incorporated into their appropriate
 unicode characters. 
 
 ::
