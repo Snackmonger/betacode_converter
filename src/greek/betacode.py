@@ -3,7 +3,7 @@ beta code (mixed case beta code)."""
 
 from src.tokenizer import TokenizingStrategy, Tokenizer
 from src.token import SymbolGroup
-from src.greek.functions import is_vowel, is_diacritical, lower_and_upper, combinations
+from src.greek.functions import is_short_vowel, is_vowel, is_diacritical, lower_and_upper, combinations
 
 from .constants import (ACCENT_MARKS,
                         ALL_DIACRITICALS,
@@ -15,17 +15,12 @@ from .constants import (ACCENT_MARKS,
                         GREEK_CONSONANT_CLUSTERS,
                         HIGH_VOWELS,
                         LENGTH_MARKS,
-                        LONG_VOWELS,
                         RHO,
                         ROUGH_SYMBOL,
-                        SHORT_VOWELS,
                         SMOOTH_SYMBOL,
                         SUBSCRIPT_SYMBOL,
                         UPSILON,
-                        VALID_BETACODE_CHARACTERS,
-                        SHORT,
-                        LONG,
-                        AMBIGUOUS)
+                        VALID_BETACODE_CHARACTERS)
 
 from .rendering import (render_betacode_vowel,
                         render_simple_betacode)
@@ -58,6 +53,7 @@ class BetacodeComplexVowelToken(SymbolGroup):
     Token to represent a complex vowel symbol in betacode.
 
     This token accommodates all combinations of vowel + diacritical mark. 
+
     Diacritical marks can come in any order, but they are evaluated according
     to the following hierarchy: 
         1) accent and breathing mark (can appear in any combination)
@@ -68,22 +64,9 @@ class BetacodeComplexVowelToken(SymbolGroup):
     and 2) to preserve 1). For instance, a diaeresis does not appear on a 
     vowel with rough breathing; if we encounter the sequence "i(+", we 
     sacrifice the "+" and preserve the "(".
-
     """
     valid_radicals = VALID_BETACODE_CHARACTERS
     valid_coefficients = ALL_DIACRITICALS
-
-    @property
-    def __length(self) -> str:
-        if self.radical in lower_and_upper(LONG_VOWELS):
-            return LONG
-        if self.radical in lower_and_upper(SHORT_VOWELS):
-            return SHORT
-        if self.radical in lower_and_upper(AMBIGUOUS_VOWELS):
-            return AMBIGUOUS
-        else:
-            raise ValueError(
-                f"Radical {self.radical} cannot be resolved to a vowel.")
 
     @property
     def __has_subscript(self) -> bool:
@@ -97,9 +80,9 @@ class BetacodeComplexVowelToken(SymbolGroup):
         """Suppress any characters that conflict with the combined sign, or 
         re-define them so that they point to an acceptable substitute.
 
-        The actual radical and coefficient of the token never change; this 
-        method simply instructs the renderer to ignore a member character, 
-        or render it a different way than written.
+        Note: The actual radical and coefficients of the token never change; 
+        this method simply instructs the renderer to ignore a member 
+        character, or render it a different way than written. 
         """
 
         def accent_mark():
@@ -122,14 +105,15 @@ class BetacodeComplexVowelToken(SymbolGroup):
         if len(length_mark()) > 1:
             self.keep_first_member_only(LENGTH_MARKS)
 
+        # Preserve capital vowels at the expense of any diacritical.
         # Majuscule upsilon must have rough breathing or none at all.
         if self.radical == UPSILON.upper() and breathing_mark() == SMOOTH_SYMBOL:
             self.redefine_char(SMOOTH_SYMBOL, ROUGH_SYMBOL)
-
+        # Uppercase vowels that have circumflex must also have a breathing mark.
         if accent_mark() == CIRCUMFLEX_SYMBOL and not breathing_mark() and self.radical.isupper():
             self.suppress_char(CIRCUMFLEX_SYMBOL)
 
-        if self.__length == SHORT:
+        if is_short_vowel(self.radical):
             # Circumflex can only exist on long (or ambiguously long) vowels
             if accent_mark() == CIRCUMFLEX_SYMBOL:
                 self.suppress_char(accent_mark())
@@ -156,7 +140,6 @@ class BetacodeComplexVowelToken(SymbolGroup):
                 self.suppress_char(DIAERESIS_SYMBOL)
 
     def __repr__(self) -> str:
-
         self.fix_character_conflicts()
         rad: str = self.radical
         coefficients: str = "".join(filter(self.is_renderable,
@@ -187,6 +170,13 @@ class BetacodeComplexConsonantToken(SymbolGroup):
 
 
     def fix_character_conflicts(self) -> None:
+        """Suppress any characters that conflict with the combined sign, or 
+        re-define them so that they point to an acceptable substitute.
+
+        Note: The actual radical and coefficients of the token never change; 
+        this method simply instructs the renderer to ignore a member 
+        character, or render it a different way than written. 
+        """
         def breathing_mark():
             return self.members(BREATHING_MARKS)
         if self.is_monograph:

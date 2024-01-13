@@ -5,8 +5,16 @@ from .token import SymbolGroup
 from .functions import is_endpoint, is_space
 
 
+# TODO: The tokenizer is limited by the given charset, and rejects a 
+# character not defined in it. We should have an option for how to treat
+# an unknown character.
+
+
 class TextCrawlProxy:
-    """Proxy that can crawl a copy of the text without modifying the actual index."""
+    """Proxy that can crawl a copy of the text without modifying the actual index.
+    """
+    # The proxy is pretty unnecessary for the current set-up, but maybe it will
+    # be useful once we are dealing with more complex character sets?
 
     def __init__(self, textblock: str):
         self.textblock: str = textblock
@@ -36,13 +44,24 @@ class TextCrawlProxy:
 class TokenizingStrategy:
     """Generic class to represent the operation of a tokenizer.
     
-    The tokenizer queries the trigger condition to see whether the
-    given radical is appropriate to begin a sequence, then"""
+    The tokenizer queries the strategy's trigger condition to see whether the
+    given radical is appropriate to begin a sequence, then generates a 
+    sequence of coefficients based on the logic in the ``create_sequence``
+    method (which must be defined in subclasses). 
+    
+    The class provides two generic sequencing methods that can fulfill this 
+    role:
+    ``create_ordered_sequence`` and ``create_unordered_sequence``
+    (See those methods' docstrings for further information.)
+    """
 
-
-    def __init__(self, textblock: str, token_type: type[SymbolGroup]) -> None:
+    def __init__(self, 
+                 textblock: str, 
+                 token_type: type[SymbolGroup]
+                 ) -> None:
         self.proxy: TextCrawlProxy = TextCrawlProxy(textblock)
         self.token_type: type[SymbolGroup] = token_type
+
 
     def trigger_condition(self, index: int) -> bool:
         """Return true if the char at the current index can begin a complex 
@@ -51,13 +70,20 @@ class TokenizingStrategy:
         self.proxy.index = index
         raise NotImplementedError
 
+
     def create_sequence(self, token: SymbolGroup) -> int:
         """Generate a sequence of coefficient characters to attatch to the 
-        radical of given token. (Subclasses must provide their own 
-        implementation of this method. The class provides two generic
-        sequencing methods that can fulfill this role: 
-        ``create_ordered_sequence`` and ``create_unordered_sequence``)."""
+        radical of given token. 
+        
+        Subclasses must provide their own implementation of this method. 
+        
+        The class provides two generic sequencing methods that can fulfill 
+        this role: 
+        ``create_ordered_sequence`` and ``create_unordered_sequence``
+        See those methods' docstrings for further information.
+        """
         raise NotImplementedError
+
 
     def create_unordered_sequence(self,
                                   token: SymbolGroup,
@@ -69,7 +95,7 @@ class TokenizingStrategy:
         Add a sequence of coefficient symbols to a given token based 
         on the premise that the sequence will terminate when a non-categorical
         symbol is met, or when a symbol is met for a category that has already 
-        been encountered.
+        been fulfilled.
 
         This entails that a group of symbols can make up a compound symbol in
         any order, but that each category within that group can only have one
@@ -82,7 +108,7 @@ class TokenizingStrategy:
 
         Returns
         -------
-        int             : Instruction to the tokenizer where to resume.
+        int             : Instruction to the tokenizer where to resume parsing.
         """
         self.proxy.index += 1
         switch: dict[str, bool] = {category: False for category in categories}
@@ -97,7 +123,6 @@ class TokenizingStrategy:
 
                     token.add_coefficient(self.proxy.curr_char)
                     switch[category] = True
-
 
             self.proxy.index += 1
 
@@ -125,18 +150,20 @@ class TokenizingStrategy:
 
         Returns
         -------
-        int             : Instruction to the tokenizer where to resume.
+        int             : Instruction to the tokenizer where to resume parsing.
         """
         self.proxy.index += 1
         current_group: str = token.radical
         remaining_combinations: list[str] = legal_combinations
         while self.proxy.has_next:
-            continued_group: str = current_group + self.proxy.curr_char
+            next_group: str = current_group + self.proxy.curr_char
             partial_matches: list[str] = re.findall(
-                fr"({continued_group}[\w]*)", " ".join(remaining_combinations))
+                fr"({next_group}[\w]*)", 
+                " ".join(remaining_combinations))
+            
             if partial_matches:
                 remaining_combinations = partial_matches
-                current_group = continued_group
+                current_group = next_group
                 token.add_coefficient(self.proxy.curr_char)
                 self.proxy.index += 1
             else:
@@ -162,31 +189,43 @@ class Tokenizer:
     def __repr__(self):
         return "".join(str(token) for token in self.tokens)
 
+
     @property
     def has_next(self) -> bool:
+        """True, if the text has another character after the current one."""
         return self.index < len(self.textblock) - 1
+
 
     @property
     def has_prev(self) -> bool:
+        """True, if the text has another character before the current one."""
         return self.index > 0
+
 
     @property
     def prev_char(self) -> str:
+        """The character that came before the current one."""
         return self.textblock[self.index - 1] if self.has_prev else ""
+
 
     @property
     def next_char(self) -> str:
+        """The character that comes after the current one."""
         return self.textblock[self.index + 1] if self.has_next else ""
+
 
     @property
     def curr_char(self) -> str:
+        """The current character."""
         return self.textblock[self.index]
 
 
     def new_token(self,
                   token_type: Optional[type[SymbolGroup]] = None
                   ) -> SymbolGroup:
-        
+        """Add generic information to a new token and return it for 
+        further processing.
+        """
         if token_type is None:
             token_type = self.default_token
 
@@ -196,6 +235,7 @@ class Tokenizer:
     
 
     def add_position_to_token(self, token: SymbolGroup) -> None:
+        """Set markers for the token's position relative to other characters."""
         if not self.has_next:
             token.is_final = True
             return
@@ -217,8 +257,8 @@ class Tokenizer:
 
 
     def tokenize(self) -> None:
-        """Parse the class' textblock for tokens as defined by the class' 
-        strategies."""
+        """Parse the class' textblock for tokens (as defined by the class' 
+        strategies)."""
         self.index = 0
         while self.has_next:
             token = self.new_token()
