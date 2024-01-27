@@ -1,8 +1,8 @@
 """This module supplies the tokens and tokenizing strategies for parsing Greek
 beta code (mixed case beta code)."""
 
-from src.tokenizer import TokenizingStrategy, Tokenizer
-from src.token import SymbolGroup
+from src.core.tokenizer import TokenizingStrategy, Tokenizer
+from src.core.token import SymbolGroup
 from src.greek.functions import is_short_vowel, is_vowel, is_diacritical, lower_and_upper, combinations
 
 from .constants import (ACCENT_MARKS,
@@ -135,9 +135,9 @@ class BetacodeComplexVowelToken(SymbolGroup):
             self.suppress_char(SUBSCRIPT_SYMBOL)
 
         # Diaeresis can only exist on high vowels.
-        if self.__has_diaeresis:
-            if not is_high_vowel():
-                self.suppress_char(DIAERESIS_SYMBOL)
+        if self.__has_diaeresis and not is_high_vowel():
+            self.suppress_char(DIAERESIS_SYMBOL)
+
 
     def __repr__(self) -> str:
         self.fix_character_conflicts()
@@ -154,6 +154,7 @@ class BetacodeComplexVowelToken(SymbolGroup):
                                                     self.redefined_chars[coefficient])
 
         return render_betacode_vowel(rad, coefficients)
+
 
 
 class BetacodeComplexConsonantToken(SymbolGroup):
@@ -222,7 +223,6 @@ class BetacodeComplexConsonantToken(SymbolGroup):
         return render_simple_betacode(rad)
 
 
-
 class BetacodeComplexVowelTokenizingStrategy(TokenizingStrategy):
     """Wrapper for Betacode vowel parsing function and parsing trigger."""
 
@@ -272,7 +272,7 @@ class BetacodeComplexConsonantTokenizingStrategy(TokenizingStrategy):
         if token.radical in lower_and_upper(RHO):
             return self.create_unordered_sequence(token, [BREATHING_MARKS])
         return self.create_ordered_sequence(token, combinations())
-
+    
 
 
 class BetacodeTokenizer(Tokenizer):

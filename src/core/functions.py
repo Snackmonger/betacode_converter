@@ -1,3 +1,5 @@
+"""Functions to make the syntax prettier."""
+
 from .constants import LATIN_CHARSET, LATIN_PUNCTUATION, SPACES
 
 def is_endpoint(char: str) -> bool:

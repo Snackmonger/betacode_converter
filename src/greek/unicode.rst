@@ -27,10 +27,10 @@ into a character from the Coptic block)
 
 ::
 
-    U+03AA Ϊ
-    U+03AB Ϋ
-    U+03CA ϊ
-    U+03CB ϋ
+    U+03AA   Ϊ
+    U+03AB   Ϋ
+    U+03CA   ϊ
+    U+03CB   ϋ
 
 Note: We can have capital upsilon with no markings, or with rough breathings etc., but not with smooth breathings etc.
 We have no characters to represent contradictory or self-evident things: neither circumflex nor macron can exist on short 
@@ -88,5 +88,7 @@ The correct display depends on the correct sequence of characters:
     >> print(alpha + grave + rough)    
     ὰ̔
 
-If we wanted to use this for the program, we would need to sort the symbols into the correct order before trying to render.
+If we wanted to use this for the program, we would need to sort the symbols into the correct order before trying to render. 
+
+
 

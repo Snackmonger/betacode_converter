@@ -1,8 +1,8 @@
 import re
 from typing import Optional
 
-from .token import SymbolGroup
-from .functions import is_endpoint, is_space
+from src.core.token import SymbolGroup
+from src.core.functions import is_endpoint, is_space
 
 
 # TODO: The tokenizer is limited by the given charset, and rejects a 

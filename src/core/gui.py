@@ -5,14 +5,11 @@ from customtkinter import (CTk,
                            CTkOptionMenu)
 from typing import TYPE_CHECKING
 
-from .greek.betacode import BetacodeTokenizer
+from src.greek.betacode import BetacodeTokenizer
+from src.latin.latincode import LatinCodeTokenizer
 
 if TYPE_CHECKING:
     from .tokenizer import Tokenizer
-
-
-# placeholder for testing
-options = ["GREEK", "LATIN"]
 
 
 class App(CTk):
@@ -20,7 +17,8 @@ class App(CTk):
 
     def __init__(self):
         super().__init__()
-        self.tokenizers: dict[str, type[Tokenizer]] = {"GREEK": BetacodeTokenizer}
+        self.tokenizers: dict[str, type[Tokenizer]] = {"GREEK": BetacodeTokenizer,
+                                                       "LATIN": LatinCodeTokenizer}
         self.selected_tokenizer: str = list(self.tokenizers)[0]
 
         # Dropdown menu (left)
@@ -36,7 +34,7 @@ class App(CTk):
         self.input.configure(font=("times new roman", 26))
         self.input.grid(column=1, row=0)
 
-        # Line
+        # Line (right)
         self.sep: ttk.Separator = ttk.Separator(self)
         self.sep.grid(column=1, row=1, sticky="NSEW")
 
@@ -45,9 +43,11 @@ class App(CTk):
         self.output.configure(font=("times new roman", 26))
         self.output.grid(column=1, row=2) 
 
+
     def change_state(self, tokenizer_name: str) -> None:
         """Change which tokenizer to use."""
         self.selected_tokenizer = tokenizer_name
+
 
     def update_text(self, *args) -> None:
         """Replace the current text with a newly parsed conversion."""

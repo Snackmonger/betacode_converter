@@ -1,7 +1,7 @@
 """
 Constant values used for parsing and rendering Greek beta code."""
 
-from src.constants import LATIN_CHARSET, SPACES, LATIN_PUNCTUATION
+from src.core.constants import LATIN_CHARSET, SPACES, LATIN_PUNCTUATION
 
 # Character strings and categories
 GREEK_CHARSET: str = "αβξδεφγηιςκλμνοπθρστυϝωχψζ"
@@ -16,6 +16,7 @@ OMEGA: str = "w"
 IOTA: str = "i"
 UPSILON: str = "u"
 RHO: str = "r"
+CONSONANTS: str = "bcdfgjklmnpqrstwxyz"
 
 # Symbols that can serve as coefficients of a radical, or if they are not
 # attached to a radical, as radicals themselves.
@@ -56,8 +57,6 @@ GREEK_CONSONANT_CLUSTERS: dict[str, str] = {"ps": "y", "ks": "c"}
 
 # Unicode character rows
 # ----------------------
-
-# This section mostly conforms to the unicode columns, below.
 # See /docs/unicode.rst for details.
 ALPHA_DIACRITICALS: int = 0x1F00
 EPSILON_DIACRITICALS: int = 0x1F10

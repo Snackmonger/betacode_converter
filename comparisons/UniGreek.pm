@@ -1,3 +1,5 @@
+# UniGreek reproduced here for educational purposes.
+
 package UniGreek;
 use utf8;
 use strict;
