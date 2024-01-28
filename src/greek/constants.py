@@ -1,5 +1,4 @@
-"""
-Constant values used for parsing and rendering Greek beta code."""
+"""Constant values used for parsing and rendering Greek beta code."""
 
 from src.core.constants import LATIN_CHARSET, SPACES, LATIN_PUNCTUATION
 
@@ -29,6 +28,7 @@ SUBSCRIPT_SYMBOL: str = "|"
 DIAERESIS_SYMBOL: str = "+"
 MACRON_SYMBOL: str = "_"
 BREVE_SYMBOL: str = "-"
+
 
 # Categories used in the program
 SHORT_VOWELS: str = EPSILON + OMICRON

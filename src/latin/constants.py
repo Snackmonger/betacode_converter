@@ -15,21 +15,16 @@ MACRON_SYMBOL: str = "_"
 BREVE_SYMBOL: str = "-"
 
 
-COMB_ROUGH: int = 0x0304
-COMB_SMOOTH: int = 0x0303
-
-
-CONVERSIONS: dict[str, int] = {ROUGH_SYMBOL: 0x0314,
+COMBINING_DIACRITICALS: dict[str, int] = {ROUGH_SYMBOL: 0x0314,
                                SMOOTH_SYMBOL: 0x0313,
-                               ACUTE_SYMBOL: 0x0301,
                                GRAVE_SYMBOL: 0x0300,
-                               DOUBLE_ACUTE_SYMBOL: 0x030B,
-                               DOUBLE_GRAVE_SYMBOL: 0x030F,
-                               STRAIGHT_CIRCUMFLEX_SYMBOL: 0x0303,
-                               CARON_SYMBOL: 0x030C,
-                               CURVED_CIRCUMFLEX_SYMBOL: 0x0342,
+                               ACUTE_SYMBOL: 0x0301,
+                               STRAIGHT_CIRCUMFLEX_SYMBOL: 0x0302,
+                               CURVED_CIRCUMFLEX_SYMBOL: 0x0303,
+                               MACRON_SYMBOL: 0x0304,
+                               BREVE_SYMBOL: 0x0306,
                                OVERDOT_SYMBOL: 0x0307,
                                DIAERESIS_SYMBOL: 0x0308,
-                               MACRON_SYMBOL: 0x0304,
-                               BREVE_SYMBOL: 0x0306
-                               }
+                               DOUBLE_ACUTE_SYMBOL: 0x030B,
+                               CARON_SYMBOL: 0x030C,
+                               DOUBLE_GRAVE_SYMBOL: 0x030F}

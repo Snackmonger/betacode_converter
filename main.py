@@ -14,3 +14,4 @@ if __name__ == "__main__":
     x: App = App()
     x.mainloop() #type:ignore
 
+

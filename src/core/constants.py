@@ -7,7 +7,7 @@ LATIN_VOWELS: str = "aeiouy"
 LATIN_CONSONANTS: str = "bcdfghjklmnpqrstvwxyz"
 LATIN_PUNCTUATION: str = ".,;:?'\"'’"
 SPACES: str = " "
-ESCAPE_CHAR: str = "%"
+ESCAPE_CHAR: str = "%" # not yet implemented
 
 
 

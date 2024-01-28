@@ -1,9 +1,8 @@
 """This module supplies the tokens and tokenizing strategies for parsing Greek
 beta code (mixed case beta code)."""
 
-from src.core.tokenizer import TokenizingStrategy, Tokenizer
-from src.core.token import SymbolGroup
-from src.greek.functions import is_short_vowel, is_vowel, is_diacritical, lower_and_upper, combinations
+from src.core import TokenizingStrategy, Tokenizer, SymbolGroup, lower_and_upper
+from .functions import is_short_vowel, is_vowel, is_diacritical, combinations
 
 from .constants import (ACCENT_MARKS,
                         ALL_DIACRITICALS,

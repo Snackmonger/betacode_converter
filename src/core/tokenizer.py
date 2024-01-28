@@ -1,5 +1,5 @@
 import re
-from typing import Optional
+from typing import Optional, Protocol
 
 from src.core.token import SymbolGroup
 from src.core.functions import is_endpoint, is_space
@@ -282,3 +282,16 @@ class Tokenizer:
         token = self.new_token()
         self.tokens.append(token)
             
+
+
+class TokenizerProtocol(Protocol):
+    """Defines the interface for all tokenizers used in the program.
+    
+    For complex tokens,"""
+
+
+    def __init__(self, textblock: str) -> None:
+        raise NotImplementedError
+    
+    def __repr__(self) -> str:
+        raise NotImplementedError

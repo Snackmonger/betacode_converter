@@ -1,12 +1,14 @@
-# type: ignore
+# type: ignore 
+
+from typing import TYPE_CHECKING
 from tkinter import ttk
 from customtkinter import (CTk,
                            CTkTextbox,
                            CTkOptionMenu)
-from typing import TYPE_CHECKING
 
-from src.greek.betacode import BetacodeTokenizer
-from src.latin.latincode import LatinCodeTokenizer
+
+from src.greek import BetacodeTokenizer, BetacodeCombiningTokenizer
+from src.latin import LatinCodeTokenizer
 
 if TYPE_CHECKING:
     from .tokenizer import Tokenizer
@@ -18,7 +20,8 @@ class App(CTk):
     def __init__(self):
         super().__init__()
         self.tokenizers: dict[str, type[Tokenizer]] = {"GREEK": BetacodeTokenizer,
-                                                       "LATIN": LatinCodeTokenizer}
+                                                       "LATIN": LatinCodeTokenizer,
+                                                       "GREEK (Combining)": BetacodeCombiningTokenizer}
         self.selected_tokenizer: str = list(self.tokenizers)[0]
 
         # Dropdown menu (left)
@@ -47,6 +50,7 @@ class App(CTk):
     def change_state(self, tokenizer_name: str) -> None:
         """Change which tokenizer to use."""
         self.selected_tokenizer = tokenizer_name
+        self.update_text()
 
 
     def update_text(self, *args) -> None:

@@ -1,8 +1,8 @@
-from src.core.token import *
-from src.core.constants import *
-from src.core.tokenizer import *
-from src.core.functions import *
-from src.core.gui import *
+from .token import *
+from .constants import *
+from .tokenizer import *
+from .functions import *
+from .gui import *
 
 __all__ = ["TokenizingStrategy",
            "SymbolGroup",
