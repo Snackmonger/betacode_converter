@@ -1,3 +1,4 @@
+from .constants import ESCAPE_CHAR
 
 class SymbolGroup:
     """
@@ -21,9 +22,6 @@ class SymbolGroup:
     valid_coefficients: str
 
     def __init__(self, radical: str):
-        if not self.is_valid_radical(radical):
-            raise ValueError(f"Unrecognized radical: {radical}\n\
-                             Valid radicals = {self.valid_radicals}")
         self.radical: str = radical
         self.coefficients: str = str()
 
@@ -102,3 +100,19 @@ class SymbolGroup:
         """
         raise NotImplementedError
 
+
+class EscapeSequenceToken(SymbolGroup):
+    """Token to allow the user to signify that the character following
+    the escape character is to be rendered in its current form.."""
+    valid_radicals: str = ESCAPE_CHAR
+    valid_coefficients: str = ""
+
+    def __repr__(self) -> str:
+        return self.coefficients
+    
+    # These methods are not necessary in the context of an escape sequence.
+    # They're just here to fulfill the interface contract.
+    def fix_character_conflicts(self) -> None:
+        return 
+    def is_valid_coefficient(self, coefficient: str) -> bool:
+        return True

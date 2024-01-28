@@ -28,3 +28,6 @@ COMBINING_DIACRITICALS: dict[str, int] = {ROUGH_SYMBOL: 0x0314,
                                DOUBLE_ACUTE_SYMBOL: 0x030B,
                                CARON_SYMBOL: 0x030C,
                                DOUBLE_GRAVE_SYMBOL: 0x030F}
+
+ITALIC_KEY: str = "abcdevzhQiklmnZopSqrstuxFKfRCIU"
+OLD_ITALIC: str = "𐌀𐌁𐌂𐌃𐌄𐌅𐌆𐌇𐌈𐌉𐌊𐌋𐌌𐌍𐌎𐌏𐌐𐌑𐌒𐌓𐌔𐌕𐌖𐌗𐌘𐌙𐌚𐌛𐌜𐌝𐌞"

@@ -1,7 +1,7 @@
 """This module supplies the tokens and tokenizing strategies for parsing Greek
 beta code (mixed case beta code)."""
 
-from src.core import TokenizingStrategy, Tokenizer, SymbolGroup, lower_and_upper
+from src.core import EscapeSequenceTokenizingStrategy, TokenizingStrategy, Tokenizer, SymbolGroup, lower_and_upper
 from .functions import is_short_vowel, is_vowel, is_diacritical, combinations
 
 from .constants import (ACCENT_MARKS,
@@ -222,22 +222,18 @@ class BetacodeComplexConsonantToken(SymbolGroup):
         return render_simple_betacode(rad)
 
 
+
 class BetacodeComplexVowelTokenizingStrategy(TokenizingStrategy):
     """Wrapper for Betacode vowel parsing function and parsing trigger."""
 
-
     def __init__(self, textblock: str):
         super().__init__(textblock, BetacodeComplexVowelToken)
-
 
     def trigger_condition(self, index: int) -> bool:
         """Return true if the char at the current index can begin a complex
         token."""
         self.proxy.index = index
-        if is_vowel(self.proxy.curr_char) and is_diacritical(self.proxy.next_char):
-            return True
-        return False
-    
+        return is_vowel(self.proxy.curr_char) and is_diacritical(self.proxy.next_char)
 
     def create_sequence(self, token: SymbolGroup) -> int:
         """Create a sequence of diacritical marks following a vowel."""
@@ -248,10 +244,8 @@ class BetacodeComplexVowelTokenizingStrategy(TokenizingStrategy):
 class BetacodeComplexConsonantTokenizingStrategy(TokenizingStrategy):
     """Wrapper for Betacode consonant parsing function and parsing trigger."""
 
-
     def __init__(self, textblock: str):
         super().__init__(textblock, BetacodeComplexConsonantToken)
-
 
     def trigger_condition(self, index: int) -> bool:
         """Return true if the char at the current index can begin a complex
@@ -260,11 +254,9 @@ class BetacodeComplexConsonantTokenizingStrategy(TokenizingStrategy):
         combination: str = self.proxy.curr_char + self.proxy.next_char
         if combination in combinations():
             return True
-        if self.proxy.curr_char in lower_and_upper(RHO) and self.proxy.next_char in BREATHING_MARKS:
-            return True
-        return False
-    
+        return self.proxy.curr_char in lower_and_upper(RHO) and self.proxy.next_char in BREATHING_MARKS
 
+    
     def create_sequence(self, token: SymbolGroup) -> int:
         """Create a complex consonant consisting either of a consonant + a 
         diacritical mark or a consonant + a consonant."""
@@ -281,9 +273,7 @@ class BetacodeTokenizer(Tokenizer):
 
     def __init__(self, textblock: str):
         super().__init__(textblock)
-        self.strategies: list[TokenizingStrategy] = [
-            BetacodeComplexVowelTokenizingStrategy(textblock),
-            BetacodeComplexConsonantTokenizingStrategy(textblock)
-        ]
         self.default_token: type[SymbolGroup] = BetacodeToken
+        self.include_strategy(BetacodeComplexVowelTokenizingStrategy(textblock))
+        self.include_strategy(BetacodeComplexConsonantTokenizingStrategy(textblock))
         self.tokenize()

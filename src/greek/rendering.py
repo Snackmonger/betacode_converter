@@ -1,3 +1,4 @@
+from loguru import logger
 from .constants import (ACUTE_SYMBOL,
                         ALPHA,
                         ALPHA_DIACRITICALS,
@@ -86,6 +87,10 @@ def render_betacode_vowel(radical: str, coefficients: str) -> str:
     Handle any combinations that have an unpredictable spot in the unicode
     table, then refer any predictable combinations to their appropriate spot.
     """
+
+    if not coefficients:
+        return render_simple_betacode(radical)
+    
     row: int = 0
     col: int = 0
     vowels = [ALPHA, EPSILON, ETA, IOTA, OMICRON, UPSILON, OMEGA]
@@ -119,7 +124,7 @@ def render_betacode_vowel(radical: str, coefficients: str) -> str:
         return chr(row + col)
 
     # Supplements borrowed from the coptic block
-    if coefficients == DIAERESIS_SYMBOL:
+    if coefficients == DIAERESIS_SYMBOL and radical in lower_and_upper(UPSILON+IOTA):
         num: int
         if radical.isupper():
             num = 0x03AA

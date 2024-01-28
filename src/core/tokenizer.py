@@ -1,8 +1,9 @@
 import re
 from typing import Optional, Protocol
 
-from src.core.token import SymbolGroup
-from src.core.functions import is_endpoint, is_space
+from .token import SymbolGroup, EscapeSequenceToken
+from .functions import is_endpoint, is_space
+from .constants import ESCAPE_CHAR
 
 
 # TODO: The tokenizer is limited by the given charset, and rejects a 
@@ -172,6 +173,28 @@ class TokenizingStrategy:
         return self.proxy.index - 1
 
 
+
+
+class EscapeSequenceTokenizingStrategy(TokenizingStrategy):
+    """Strategy to allow the user to signify that the character following
+    the escape character is to be rendered in its current form."""
+    def __init__(self, textblock: str, token_type: type[SymbolGroup] = EscapeSequenceToken) -> None:
+        super().__init__(textblock, token_type)
+
+    def trigger_condition(self, index: int) -> bool:
+        """Return true if the char at the current index can begin a complex 
+        token"""
+        self.proxy.index = index
+        return self.proxy.curr_char == ESCAPE_CHAR and self.proxy.has_next
+
+    def create_sequence(self, token: SymbolGroup) -> int:
+        token.radical = self.proxy.curr_char
+        token.coefficients = self.proxy.next_char
+        return self.proxy.index + 1
+
+
+
+
 class Tokenizer:
     """
     Generic tokenizer for parsing characters and character groups into tokens.
@@ -182,13 +205,16 @@ class Tokenizer:
         self.textblock: str = textblock + self.END
         self.index: int = 0
         self.tokens: list[SymbolGroup] = []
-        self.strategies: list[TokenizingStrategy] = []
+        self.strategies: list[TokenizingStrategy] = [EscapeSequenceTokenizingStrategy(textblock)]
         self.default_token: type[SymbolGroup] = SymbolGroup
 
     
     def __repr__(self):
         return "".join(str(token) for token in self.tokens)
 
+    def include_strategy(self, strategy: TokenizingStrategy) -> None:
+        """Add a strategy for the class to use during parsing."""
+        self.strategies.append(strategy)
 
     @property
     def has_next(self) -> bool:
@@ -285,9 +311,7 @@ class Tokenizer:
 
 
 class TokenizerProtocol(Protocol):
-    """Defines the interface for all tokenizers used in the program.
-    
-    For complex tokens,"""
+    """Defines the interface for all tokenizers used in the program."""
 
 
     def __init__(self, textblock: str) -> None:
