@@ -1,3 +1,5 @@
+"""Tokens used in the program (base class & default token(s))."""
+
 from .constants import ESCAPE_CHAR
 
 class SymbolGroup:

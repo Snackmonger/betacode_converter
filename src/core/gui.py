@@ -1,4 +1,7 @@
 # type:ignore  -- customtkinter has no stubfile
+"""Simple GUI to allow the user to try out various conversion paradigms."""
+
+
 from typing import TYPE_CHECKING
 from tkinter import ttk
 from customtkinter import (CTk,

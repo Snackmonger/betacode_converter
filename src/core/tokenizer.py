@@ -1,14 +1,11 @@
+"""Base classes for tokenizer and tokenizing strategies."""
+
 import re
 from typing import Optional, Protocol
 
 from .token import SymbolGroup, EscapeSequenceToken
 from .functions import is_endpoint, is_space
 from .constants import ESCAPE_CHAR
-
-
-# TODO: The tokenizer is limited by the given charset, and rejects a 
-# character not defined in it. We should have an option for how to treat
-# an unknown character.
 
 
 class TextCrawlProxy:
@@ -311,7 +308,7 @@ class Tokenizer:
 
 
 class TokenizerProtocol(Protocol):
-    """Defines the interface for all tokenizers used in the program."""
+    """Defines the interface for all text converters used in the program."""
 
 
     def __init__(self, textblock: str) -> None:
